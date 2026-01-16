@@ -3,7 +3,7 @@ FROM python:3.14-slim-bookworm
 LABEL maintainer="Lev Pasichnyi"
 LABEL description="Production-ready Python server container"
 LABEL licenses="MIT"
-LABEL documentation="https://github.com/levpa/python-try"
+LABEL documentation="https://github.com/levarc-hub/python-try"
 
 WORKDIR /app
 RUN useradd -m appuser
