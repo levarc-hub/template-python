@@ -10,7 +10,7 @@ sudo apt-get update && sudo apt-get upgrade -y
 sudo ln -sf /usr/share/zoneinfo/Europe/Kyiv /etc/localtime
 sudo dpkg-reconfigure -f noninteractive tzdata
 
-# Ensure Python 3.12 is available
+# Ensure Python 3.14 is available
 if ! command -v python3.14 &> /dev/null; then
   echo "❌ Python 3.14 not found. Please install it in the container base image."
   exit 1
