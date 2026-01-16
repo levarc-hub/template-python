@@ -5,6 +5,21 @@ LABEL description="Production-ready Python server container"
 LABEL licenses="MIT"
 LABEL documentation="https://github.com/levarc-hub/python-try"
 
+ARG VERSION
+ARG COMMIT
+ARG BUILD_DATE
+ARG REPO
+
+LABEL version=$VERSION \
+  commit=$COMMIT \
+  build_date=$BUILD_DATE \
+  repo="https://github.com/${REPO}" \
+  registry="ghcr.io/${REPO}"
+
+ENV VERSION=$VERSION \
+  COMMIT=$COMMIT \
+  BUILD_DATE=$BUILD_DATE
+
 WORKDIR /app
 RUN useradd -m appuser
 USER appuser

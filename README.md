@@ -1,32 +1,9 @@
 # python-try
 Template python repository
 
-- development in dev container
-- build docker images inside dev environment
-- Makefile verify, test, build, lint, e.t.c.
-
-## DevContainer configuration
-
-```sh
-# install/rewrite precommit hook (run once after 'git clone')
-make precommit
-
-# Devcontainer config(docker image, VS Code features and extensions): 
-./devcontainer/devcontainer.json
-
-# Run devcontainer (WSL2), creates dev environment in container
-Ctrl + Shift + P: Dev Containers: Open Container/Rebuild Container.
-
-# files binding from WSL host(.ssh keys, creds, aliases should be configured):
-.ssh/
-├── allowed_signers
-├── azure_rsa
-├── config
-├── github_ed25519
-├── id_ed25519.pub
-└── known_hosts
-.gitconfig
-```
+- devcontainer local python development
+- dockerfile, image, container local testing
+- Makefile, tooling local testing
 
 ## Main dev commands
 ```sh
@@ -39,7 +16,7 @@ make verify lint test check-build
 # add and commit files: 
 git add -A && git commit -m "new signed commit" && git push
 
-## bump version and push tags to remote (default behavior -> patch version)
+## bumps version and push tags to remote (default -> patch version)
 # !! runs build -> push pipeline to ghcr
 # !! runs release pipeline to make release on github
 make release # make release <patch/minor/major>
@@ -47,17 +24,14 @@ make release # make release <patch/minor/major>
 ## Server local test
 python src/server.py
 
-## Build and run from Docker(DinD) inside devcontainer
+## Build and run dock
 make docker-build
-
-# open browser... observe server logs in terminal
 ```
 
-## Debug image labels
+## Debug image labels locally
 
 ```sh
-IMAGE=ghcr.io/levpa/python-try:vX.X.X # <-- version from your last tag
-docker pull $IMAGE
+IMAGE=ghcr.io/levarc-hub/python-try:$(git describe --tags --abbrev=0)
 IMAGE_ID=$(docker images --format '{{.Repository}}:{{.Tag}} {{.ID}}' | grep $IMAGE | awk '{print $2}')
 echo -e "\nIMAGE_ID: $IMAGE_ID\n"
 docker inspect "$IMAGE_ID" --format='{{json .Config.Labels}}' | jq

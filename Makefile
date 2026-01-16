@@ -1,4 +1,5 @@
-.PHONY: verify test hook lint check-build precommit release version-inject docker-build chlog
+TARGETS := $(shell grep -E '^[a-zA-Z_-]+:' Makefile | cut -d':' -f1)
+.PHONY: $(TARGETS)
 
 SRC_FOLDER := src
 verify:
@@ -46,11 +47,10 @@ version-inject:
 
 docker-build:
 	docker buildx build \
-		--label version=$(VERSION) \
-		--label commit=$(COMMIT) \
-		--label build_date=$(BUILD_DATE) \
-		--label repo=https://github.com/$(REPO) \
-		--label registry=ghcr.io/$(REPO) \
+		--build-arg VERSION=$(VERSION) \
+		--build-arg COMMIT=$(COMMIT) \
+		--build-arg BUILD_DATE=$(BUILD_DATE) \
+		--build-arg REPO=$(REPO) \
 		-t ghcr.io/$(REPO):$(VERSION) .
 	docker run -p 8080:8080 ghcr.io/$(REPO):$(VERSION)
 

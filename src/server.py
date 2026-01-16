@@ -2,11 +2,11 @@ from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 import sys
 import time
 import platform
+import os
 
-try:
-    from version import VERSION, COMMIT, BUILD_DATE
-except ImportError:
-    VERSION = COMMIT = BUILD_DATE = "unknown"
+VERSION = os.getenv("VERSION", "unknown")
+COMMIT = os.getenv("COMMIT", "unknown")
+BUILD_DATE = os.getenv("BUILD_DATE", "unknown")
 
 PYTHON_VERSION = platform.python_version()
 
