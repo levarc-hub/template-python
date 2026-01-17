@@ -3,6 +3,8 @@ import sys
 import time
 import platform
 import os
+import json
+from urllib.parse import urlparse, parse_qs
 
 VERSION = os.getenv("VERSION", "unknown")
 COMMIT = os.getenv("COMMIT", "unknown")
@@ -26,7 +28,40 @@ class SimpleHandler(BaseHTTPRequestHandler):
             self.send_response(204)
             self.end_headers()
             return
+    
+        # 1. Health‑check
+        if path == "/health":
+            self.send_response(200)
+            self.send_header("Content-type", "text/plain; charset=utf-8")
+            self.end_headers()
+            self.wfile.write(b"healthy")
+            return
 
+        # 2. Version / build info
+        if path == "/info":
+            info = {
+                "version": VERSION,
+                "commit": COMMIT,
+                "build_date": BUILD_DATE,
+                "python_version": PYTHON_VERSION
+            }
+            payload = json.dumps(info, indent=2).encode("utf‑8")
+            self.send_response(200)
+            self.send_header("Content-type", "application/json; charset=utf-8")
+            self.end_headers()
+            self.wfile.write(payload)
+            return
+
+        # 3. Simple metrics (placeholder)
+        if path == "/metrics":
+            metrics = f"uptime_seconds {time.time() - start:.0f}\n"
+            self.send_response(200)
+            self.send_header("Content-type", "text/plain; charset=utf-8")
+            self.end_headers()
+            self.wfile.write(metrics.encode("utf-8"))
+            return
+
+        # ---- EXISTING ROUTE ----
         self.send_response(200)
         self.send_header("Content-type", "text/plain; charset=utf-8")
         self.end_headers()
