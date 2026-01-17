@@ -28,19 +28,6 @@ jobs:
       - name: tests, checks, verifications
         run: |
           make verify lint test check-build
-          make version-inject
-
-      - name: 🚀 Extract version metadata from version.py
-        id: meta
-        run: |
-          eval $(awk -F= '{gsub(/'\''/, "", $2); gsub(/^ +| +$$/, "", $2); \
-            gsub(/ /, "", $1); print $1"=\"" $2 "\"" }' src/version.py)
-          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
-          echo "COMMIT=$COMMIT" >> $GITHUB_OUTPUT
-          echo "DATE=$BUILD_DATE" >> $GITHUB_OUTPUT
-          echo "REPO=https://github.com/${{ github.repository }}" >> $GITHUB_OUTPUT
-          echo "REGISTRY=ghcr.io/levarc-hub/python-try" >> $GITHUB_OUTPUT
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -51,16 +38,25 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Args for docker
+        id: args
+        run: |
+          echo "VERSION=$(git tag --sort=-v:refname | grep -E '^v?[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1)" >> $GITHUB_OUTPUT
+          echo "COMMIT=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          echo "DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_OUTPUT
+          echo "REPO=${{ github.repository }}" >> $GITHUB_OUTPUT
+          echo "REGISTRY=ghcr.io/${{ github.repository }}" >> $GITHUB_OUTPUT
+
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
           context: .
           push: true
-          tags: ${{ steps.meta.outputs.REGISTRY }}:${{ steps.meta.outputs.VERSION }},${{ steps.meta.outputs.REGISTRY }}:latest
-          cache-from: type=registry,ref=${{ steps.meta.outputs.REGISTRY }}:buildcache
-          cache-to: type=registry,ref=${{ steps.meta.outputs.REGISTRY }}:buildcache,mode=max
-          labels: |
-            org.opencontainers.image.source=${{ steps.meta.outputs.REPO }}
-            org.opencontainers.image.version=${{ steps.meta.outputs.VERSION }}
-            org.opencontainers.image.revision=${{ steps.meta.outputs.COMMIT }}
-            org.opencontainers.image.created=${{ steps.meta.outputs.DATE }}
+          tags: ${{ steps.args.outputs.REGISTRY }}:${{ steps.args.outputs.VERSION }},${{ steps.args.outputs.REGISTRY }}:latest
+          cache-from: type=registry,ref=${{ steps.args.outputs.REGISTRY }}:buildcache
+          cache-to: type=registry,ref=${{ steps.args.outputs.REGISTRY }}:buildcache,mode=max
+          build-args: |
+            VERSION=${{ steps.args.outputs.VERSION }}
+            COMMIT=${{ steps.args.outputs.COMMIT }}
+            BUILD_DATE=${{ steps.args.outputs.DATE }}
+            REPO=${{ steps.args.outputs.REPO }}

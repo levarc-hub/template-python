@@ -42,6 +42,12 @@ BUILD_DATE := $(shell date -u +%Y-%m-%dT%H:%M:%SZ)
 live:
 	python src/server.py
 
+version-inject:
+	@echo "🚀 Injecting version, commit sha and date into version.py"
+	@echo "VERSION = '$(VERSION)'" > $(SRC_FOLDER)/version.py
+	@echo "COMMIT = '$(COMMIT)'" >> $(SRC_FOLDER)/version.py
+	@echo "BUILD_DATE = '$(BUILD_DATE)'" >> $(SRC_FOLDER)/version.py
+
 docker-build:
 	docker buildx build \
 		--build-arg VERSION=$(VERSION) \
