@@ -26,10 +26,12 @@ make live
 make docker-build
 ```
 
-### Debug image labels locally
+### Debug image labels
 
 ```sh
-IMAGE=ghcr.io/levarc-hub/python-try:$(git describe --tags --abbrev=0)
+IMAGE=ghcr.io/levarc-hub/template-python:$(git describe --tags --abbrev=0)
+echo "ghp_PAT_token" | docker login ghcr.io -u levpa --password-stdin
+docker pull $IMAGE
 IMAGE_ID=$(docker images --format '{{.Repository}}:{{.Tag}} {{.ID}}' | grep $IMAGE | awk '{print $2}')
 echo -e "\nIMAGE_ID: $IMAGE_ID\n"
 docker inspect "$IMAGE_ID" --format='{{json .Config.Labels}}' | jq
