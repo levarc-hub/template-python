@@ -19,8 +19,9 @@ jobs:
 
       - name: 📝 Generate CHANGELOG.md
         run: |
-          make chlog
-
+          cargo install git-cliff
+          git-cliff --init
+          git-cliff -o CHANGELOG.md
       - name: 🚀 Create GitHub Release
         run: |
           TAG_NAME="${GITHUB_REF#refs/tags/}"
