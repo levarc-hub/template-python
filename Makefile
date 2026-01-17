@@ -51,7 +51,7 @@ docker-build:
 		-t ghcr.io/$(REPO):$(VERSION) .
 	docker run -p 8080:8080 ghcr.io/$(REPO):$(VERSION)
 
-CHLOG_LENGTH ?= 20
+CHLOG_LENGTH ?= 12
 BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 VERSION := $(shell git describe --tags --abbrev=0)
 
