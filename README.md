@@ -5,30 +5,28 @@ Template python repository
 - dockerfile, image, container local testing
 - Makefile, tooling local testing
 
-## Main dev commands
+## Main commands
+
+Create devcontainer:
+`Ctrl + Shift + P -> Dev Containers: Rebuild Container`
+
 ```sh
-# install deps if needed
-pip install -r src/requirements.txt
-
-# CI test
-make verify lint test check-build
-
-# add and commit files: 
-git add -A && git commit -m "new signed commit" && git push
+# add and use named commits - chore: | feat: | fix: | refactor: 
+git ac "feat: new feature" && git push
 
 ## bumps version and push tags to remote (default -> patch version)
 # !! runs build -> push pipeline to ghcr
 # !! runs release pipeline to make release on github
 make release # make release <patch/minor/major>
 
-## Server local test
-python src/server.py
+## Server live test, no docker
+make live
 
-## Build and run dock
+## Build and run in docker container
 make docker-build
 ```
 
-## Debug image labels locally
+### Debug image labels locally
 
 ```sh
 IMAGE=ghcr.io/levarc-hub/python-try:$(git describe --tags --abbrev=0)

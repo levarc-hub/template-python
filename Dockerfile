@@ -1,24 +1,24 @@
 FROM python:3.14-slim-bookworm
 
-LABEL maintainer="Lev Pasichnyi"
-LABEL description="Production-ready Python server container"
-LABEL licenses="MIT"
-LABEL documentation="https://github.com/levarc-hub/python-try"
-
 ARG VERSION
 ARG COMMIT
 ARG BUILD_DATE
 ARG REPO
 
-LABEL version=$VERSION \
-  commit=$COMMIT \
-  build_date=$BUILD_DATE \
-  repo="https://github.com/${REPO}" \
-  registry="ghcr.io/${REPO}"
+LABEL org.opencontainers.image.authors="Lev Pasichnyi <lev.pa@levarc.com>"
+LABEL org.opencontainers.image.vendor="LEVARC™"
+LABEL org.opencontainers.image.description="Python server container"
+LABEL org.opencontainers.image.licenses="MIT"
+LABEL org.opencontainers.image.title="Python Template"
+LABEL org.opencontainers.image.version=$VERSION
+LABEL org.opencontainers.image.revision=$COMMIT
+LABEL org.opencontainers.image.created=$BUILD_DATE
+LABEL org.opencontainers.image.source="https://github.com/${REPO}"
+LABEL org.opencontainers.image.documentation="https://github.com/${REPO}"
 
-ENV VERSION=$VERSION \
-  COMMIT=$COMMIT \
-  BUILD_DATE=$BUILD_DATE
+ENV VERSION=$VERSION
+ENV COMMIT=$COMMIT
+ENV BUILD_DATE=$BUILD_DATE
 
 WORKDIR /app
 RUN useradd -m appuser
